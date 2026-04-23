@@ -11,6 +11,9 @@
   --accent-soft: rgba(184, 92, 56, 0.14);
   --success: #2f7d4b;
   --shadow: 0 24px 60px rgba(75, 52, 40, 0.12);
+  --event-political: #d84e3f;
+  --event-church: #4a5f8f;
+  --event-enlightenment: #2f7d4b;
 }
 
 * {
@@ -328,6 +331,10 @@ img {
   margin-bottom: 18px;
 }
 
+.selector-wrap {
+  display: block;
+}
+
 .selector-wrap span {
   display: block;
   margin-bottom: 8px;
@@ -417,6 +424,18 @@ img {
   background: var(--success);
 }
 
+.calendar-day--type-political .calendar-day__dot {
+  background: var(--event-political);
+}
+
+.calendar-day--type-church .calendar-day__dot {
+  background: var(--event-church);
+}
+
+.calendar-day--type-enlightenment .calendar-day__dot {
+  background: var(--event-enlightenment);
+}
+
 .calendar-day--selected .calendar-day__dot {
   background: white;
 }
@@ -444,6 +463,18 @@ img {
 
 .legend-dot--selected {
   background: var(--accent);
+}
+
+.legend-dot--political {
+  background: var(--event-political);
+}
+
+.legend-dot--church {
+  background: var(--event-church);
+}
+
+.legend-dot--enlightenment {
+  background: var(--event-enlightenment);
 }
 
 .person-modal-content {
@@ -479,6 +510,18 @@ img {
   color: var(--accent-dark);
   font-size: 0.9rem;
   font-weight: 700;
+}
+
+.person-quote {
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  border-left: 3px solid var(--accent);
+  background: rgba(184, 92, 56, 0.08);
+  border-radius: 4px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  font-style: italic;
 }
 
 .modal-portrait {

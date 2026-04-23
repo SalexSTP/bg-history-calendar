@@ -11,7 +11,8 @@ const state = {
   selectedDate: null,
   currentMonth: null,
   currentYear: null,
-  personModal: null
+  personModal: null,
+  eventTypeFilter: ""
 };
 
 const elements = {
@@ -21,6 +22,7 @@ const elements = {
   calendarWeekdays: document.getElementById("calendarWeekdays"),
   monthSelect: document.getElementById("monthSelect"),
   yearSelect: document.getElementById("yearSelect"),
+  eventTypeFilter: document.getElementById("eventTypeFilter"),
   prevMonthBtn: document.getElementById("prevMonthBtn"),
   nextMonthBtn: document.getElementById("nextMonthBtn"),
   eventCount: document.getElementById("eventCount"),
@@ -93,6 +95,17 @@ function bindEvents() {
     renderCalendar();
     renderSelectedEvent();
   });
+
+  elements.eventTypeFilter.addEventListener("change", (event) => {
+    state.eventTypeFilter = event.target.value;
+    populateYearOptions();
+    selectFirstEventForVisibleYear();
+    populateMonthOptions();
+    selectFirstEventForVisibleMonth();
+    syncControls();
+    renderCalendar();
+    renderSelectedEvent();
+  });
 }
 
 function renderWeekdays() {
@@ -120,12 +133,20 @@ function populateMonthOptions() {
     .join("");
 }
 
+function getFilteredEvents() {
+  if (!state.eventTypeFilter) {
+    return state.events;
+  }
+  return state.events.filter((event) => event.type === state.eventTypeFilter);
+}
+
 function renderCalendar() {
   const firstDay = new Date(state.currentYear, state.currentMonth, 1);
   const daysInMonth = new Date(state.currentYear, state.currentMonth + 1, 0).getDate();
   const mondayBasedOffset = (firstDay.getDay() + 6) % 7;
 
-  const eventMap = new Map(state.events.map((event) => [event.date, event]));
+  const filteredEvents = getFilteredEvents();
+  const eventMap = new Map(filteredEvents.map((event) => [event.date, event]));
   elements.calendarTitle.textContent = `${monthNames[state.currentMonth]} ${state.currentYear}`;
   elements.calendarGrid.innerHTML = "";
 
@@ -141,8 +162,13 @@ function renderCalendar() {
     const button = document.createElement("button");
     const isSelected = state.selectedDate === dateKey;
 
+    let className = `calendar-day${event ? " calendar-day--active" : ""}${isSelected ? " calendar-day--selected" : ""}`;
+    if (event && event.type) {
+      className += ` calendar-day--type-${event.type}`;
+    }
+
     button.type = "button";
-    button.className = `calendar-day${event ? " calendar-day--active" : ""}${isSelected ? " calendar-day--selected" : ""}`;
+    button.className = className;
     button.disabled = !event;
     button.innerHTML = `
       <span class="calendar-day__number">${day}</span>
@@ -209,7 +235,7 @@ function renderSelectedEvent() {
     </section>
 
     <section class="event-section">
-      <h3 class="section-title">Изображения</h3>
+      <h3 class="section-title">Материал</h3>
       <div class="gallery-grid">
         ${event.gallery.map(renderGalleryCard).join("")}
       </div>
@@ -249,6 +275,11 @@ function openPersonModal(personId) {
   }
 
   elements.personModalTitle.textContent = person.name;
+  let quoteHtml = "";
+  if (person.quote) {
+    quoteHtml = `<blockquote class="person-quote"><em>"${person.quote}"</em></blockquote>`;
+  }
+
   elements.personModalBody.innerHTML = `
     <div class="person-modal-layout">
       <div>
@@ -258,6 +289,7 @@ function openPersonModal(personId) {
           <span>Място: ${person.birthPlace}</span>
         </div>
         <p>${person.description}</p>
+        ${quoteHtml}
       </div>
       <div>
         <img class="modal-portrait" src="${person.image}" alt="${person.name}">
@@ -269,17 +301,18 @@ function openPersonModal(personId) {
 }
 
 function navigateEvent(step) {
-  const currentIndex = state.events.findIndex((event) => event.date === state.selectedDate);
+  const filteredEvents = getFilteredEvents();
+  const currentIndex = filteredEvents.findIndex((event) => event.date === state.selectedDate);
   if (currentIndex === -1) {
     return;
   }
 
   const nextIndex = currentIndex + step;
-  if (nextIndex < 0 || nextIndex >= state.events.length) {
+  if (nextIndex < 0 || nextIndex >= filteredEvents.length) {
     return;
   }
 
-  state.selectedDate = state.events[nextIndex].date;
+  state.selectedDate = filteredEvents[nextIndex].date;
   syncStateToSelectedEvent();
   syncControls();
   renderCalendar();
@@ -299,7 +332,8 @@ function syncStateToSelectedEvent() {
 }
 
 function selectFirstEventForVisibleYear() {
-  const yearEvents = state.events.filter((event) => getEventYear(event) === state.currentYear);
+  const filteredEvents = getFilteredEvents();
+  const yearEvents = filteredEvents.filter((event) => getEventYear(event) === state.currentYear);
   const selectedStillVisible = yearEvents.some((event) => event.date === state.selectedDate);
 
   if (selectedStillVisible) {
@@ -321,7 +355,8 @@ function selectFirstEventForVisibleYear() {
 }
 
 function selectFirstEventForVisibleMonth() {
-  const monthEvents = state.events.filter(
+  const filteredEvents = getFilteredEvents();
+  const monthEvents = filteredEvents.filter(
     (event) => getEventYear(event) === state.currentYear && getEventMonth(event) === state.currentMonth
   );
 
@@ -336,12 +371,14 @@ function selectFirstEventForVisibleMonth() {
 }
 
 function getAvailableYears() {
-  return [...new Set(state.events.map((event) => getEventYear(event)))];
+  const filteredEvents = getFilteredEvents();
+  return [...new Set(filteredEvents.map((event) => getEventYear(event)))];
 }
 
 function getAvailableMonthsForYear(year) {
+  const filteredEvents = getFilteredEvents();
   return [...new Set(
-    state.events
+    filteredEvents
       .filter((event) => getEventYear(event) === year)
       .map((event) => getEventMonth(event))
   )];
@@ -366,9 +403,10 @@ function syncControls() {
 }
 
 function updateNavButtons() {
-  const currentIndex = state.events.findIndex((event) => event.date === state.selectedDate);
+  const filteredEvents = getFilteredEvents();
+  const currentIndex = filteredEvents.findIndex((event) => event.date === state.selectedDate);
   elements.prevMonthBtn.disabled = currentIndex <= 0;
-  elements.nextMonthBtn.disabled = currentIndex === -1 || currentIndex >= state.events.length - 1;
+  elements.nextMonthBtn.disabled = currentIndex === -1 || currentIndex >= filteredEvents.length - 1;
 }
 
 function formatDateKey(year, monthIndex, day) {

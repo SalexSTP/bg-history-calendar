@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Календар на Българското възраждане</title>
+  <title>Календар на Българското възраждане - Търновска област</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
   <div class="page-shell">
     <header class="hero">
       <div class="hero__copy">
-        <h1>Календар на събития и личности от Българското възраждане</h1>
+        <h1>Календар на събития и личности от Българското възраждане в Търновска област</h1>
         <p>
           Избери активна дата от календара, за да разгледаш събитие, участници и визуални материали.
         </p>
@@ -73,12 +73,23 @@
           </label>
         </div>
 
+        <label class="selector-wrap">
+          <span>Филтър по тип</span>
+          <select id="eventTypeFilter" class="form-select">
+            <option value="">Всички събития</option>
+            <option value="political">Политически борби</option>
+            <option value="church">Църковни борби</option>
+            <option value="enlightenment">Просвета и култура</option>
+          </select>
+        </label>
+
         <div class="calendar-weekdays" id="calendarWeekdays"></div>
         <div class="calendar-grid" id="calendarGrid"></div>
 
         <div class="calendar-legend">
-          <div><span class="legend-dot legend-dot--active"></span> Активна дата</div>
-          <div><span class="legend-dot legend-dot--selected"></span> Избрана дата</div>
+          <div><span class="legend-dot legend-dot--political"></span> Политически борби</div>
+          <div><span class="legend-dot legend-dot--church"></span> Църковни борби</div>
+          <div><span class="legend-dot legend-dot--enlightenment"></span> Просвета и култура</div>
         </div>
       </aside>
     </main>
