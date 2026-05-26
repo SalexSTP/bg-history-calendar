@@ -8,7 +8,7 @@ const weekdayNames = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"];
 const state = {
   events: [],
   people: new Map(),
-  selectedDate: null,
+  selectedEventId: null,
   currentMonth: null,
   currentYear: null,
   personModal: null,
@@ -50,7 +50,7 @@ async function init() {
     const firstEvent = state.events[0];
     const initialDate = firstEvent ? new Date(firstEvent.date) : new Date();
 
-    state.selectedDate = firstEvent?.date || null;
+    state.selectedEventId = firstEvent?.id || null;
     state.currentMonth = initialDate.getMonth();
     state.currentYear = initialDate.getFullYear();
 
@@ -146,7 +146,11 @@ function renderCalendar() {
   const mondayBasedOffset = (firstDay.getDay() + 6) % 7;
 
   const filteredEvents = getFilteredEvents();
-  const eventMap = new Map(filteredEvents.map((event) => [event.date, event]));
+  const eventMap = new Map();
+  filteredEvents.forEach((event) => {
+    if (!eventMap.has(event.date)) eventMap.set(event.date, []);
+    eventMap.get(event.date).push(event);
+  });
   elements.calendarTitle.textContent = `${monthNames[state.currentMonth]} ${state.currentYear}`;
   elements.calendarGrid.innerHTML = "";
 
@@ -158,27 +162,27 @@ function renderCalendar() {
 
   for (let day = 1; day <= daysInMonth; day += 1) {
     const dateKey = formatDateKey(state.currentYear, state.currentMonth, day);
-    const event = eventMap.get(dateKey);
+    const eventsForDay = eventMap.get(dateKey) || [];
     const button = document.createElement("button");
-    const isSelected = state.selectedDate === dateKey;
+    const isSelected = eventsForDay.some((e) => e.id === state.selectedEventId);
 
-    let className = `calendar-day${event ? " calendar-day--active" : ""}${isSelected ? " calendar-day--selected" : ""}`;
-    if (event && event.type) {
-      className += ` calendar-day--type-${event.type}`;
+    let className = `calendar-day${eventsForDay.length ? " calendar-day--active" : ""}${isSelected ? " calendar-day--selected" : ""}`;
+    if (eventsForDay[0] && eventsForDay[0].type) {
+      className += ` calendar-day--type-${eventsForDay[0].type}`;
     }
 
     button.type = "button";
     button.className = className;
-    button.disabled = !event;
+    button.disabled = eventsForDay.length === 0;
     button.innerHTML = `
       <span class="calendar-day__number">${day}</span>
-      ${event ? '<span class="calendar-day__dot"></span>' : ""}
+      ${eventsForDay.length ? '<span class="calendar-day__dot"></span>' : ""}
     `;
 
-    if (event) {
-      button.title = event.title;
+    if (eventsForDay.length) {
+      button.title = eventsForDay.map((e) => e.title).join("; ");
       button.addEventListener("click", () => {
-        state.selectedDate = dateKey;
+        state.selectedEventId = eventsForDay[0].id;
         syncStateToSelectedEvent();
         syncControls();
         renderCalendar();
@@ -302,7 +306,7 @@ function openPersonModal(personId) {
 
 function navigateEvent(step) {
   const filteredEvents = getFilteredEvents();
-  const currentIndex = filteredEvents.findIndex((event) => event.date === state.selectedDate);
+  const currentIndex = filteredEvents.findIndex((event) => event.id === state.selectedEventId);
   if (currentIndex === -1) {
     return;
   }
@@ -312,7 +316,7 @@ function navigateEvent(step) {
     return;
   }
 
-  state.selectedDate = filteredEvents[nextIndex].date;
+  state.selectedEventId = filteredEvents[nextIndex].id;
   syncStateToSelectedEvent();
   syncControls();
   renderCalendar();
@@ -334,10 +338,11 @@ function syncStateToSelectedEvent() {
 function selectFirstEventForVisibleYear() {
   const filteredEvents = getFilteredEvents();
   const yearEvents = filteredEvents.filter((event) => getEventYear(event) === state.currentYear);
-  const selectedStillVisible = yearEvents.some((event) => event.date === state.selectedDate);
+  const selectedStillVisible = yearEvents.some((event) => event.id === state.selectedEventId);
 
   if (selectedStillVisible) {
-    const selectedDate = new Date(state.selectedDate);
+    const selectedEvent = state.events.find((e) => e.id === state.selectedEventId);
+    const selectedDate = new Date(selectedEvent.date);
     state.currentMonth = selectedDate.getMonth();
     populateMonthOptions();
     return;
@@ -348,7 +353,7 @@ function selectFirstEventForVisibleYear() {
     return;
   }
 
-  state.selectedDate = nextEvent.date;
+  state.selectedEventId = nextEvent.id;
   const nextDate = new Date(nextEvent.date);
   state.currentMonth = nextDate.getMonth();
   populateMonthOptions();
@@ -359,14 +364,13 @@ function selectFirstEventForVisibleMonth() {
   const monthEvents = filteredEvents.filter(
     (event) => getEventYear(event) === state.currentYear && getEventMonth(event) === state.currentMonth
   );
-
-  const selectedStillVisible = monthEvents.some((event) => event.date === state.selectedDate);
+  const selectedStillVisible = monthEvents.some((event) => event.id === state.selectedEventId);
   if (selectedStillVisible) {
     return;
   }
 
   if (monthEvents[0]) {
-    state.selectedDate = monthEvents[0].date;
+    state.selectedEventId = monthEvents[0].id;
   }
 }
 
@@ -385,7 +389,7 @@ function getAvailableMonthsForYear(year) {
 }
 
 function getSelectedEvent() {
-  return state.events.find((event) => event.date === state.selectedDate);
+  return state.events.find((event) => event.id === state.selectedEventId);
 }
 
 function getEventYear(event) {
@@ -404,7 +408,7 @@ function syncControls() {
 
 function updateNavButtons() {
   const filteredEvents = getFilteredEvents();
-  const currentIndex = filteredEvents.findIndex((event) => event.date === state.selectedDate);
+  const currentIndex = filteredEvents.findIndex((event) => event.id === state.selectedEventId);
   elements.prevMonthBtn.disabled = currentIndex <= 0;
   elements.nextMonthBtn.disabled = currentIndex === -1 || currentIndex >= filteredEvents.length - 1;
 }
