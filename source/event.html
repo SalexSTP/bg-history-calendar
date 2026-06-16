@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Събитие</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- LEFT: EVENT -->
+  <div class="left">
+    <h1 id="title"></h1>
+    <p id="date"></p>
+    <p id="desc"></p>
+
+    <h3>Участници</h3>
+    <ul id="people"></ul>
+
+    <h3>Галерия</h3>
+    <div id="gallery"></div>
+  </div>
+
+  <!-- RIGHT: CALENDAR -->
+  <div class="right">
+
+    <select id="eventSelect"></select>
+
+    <h3 id="calTitle"></h3>
+    <div id="calendar"></div>
+
+    <button onclick="goBack()">Назад</button>
+
+  </div>
+
+</div>
+
+<script src="event.js"></script>
+</body>
+</html>
