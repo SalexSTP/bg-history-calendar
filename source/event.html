@@ -1,42 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="bg">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Събитие</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Детайли за събитие от онлайн календара за Българското възраждане в Търновска област.">
+  <title>Събитие | Календар на Българското възраждане</title><link rel="stylesheet" href="style.css">
 </head>
-<body>
-
-<div class="layout">
-
-  <!-- LEFT: EVENT -->
-  <div class="left">
-    <h1 id="title"></h1>
-    <p id="date"></p>
-    <p id="desc"></p>
-
-    <h3>Участници</h3>
-    <ul id="people"></ul>
-
-    <h3>Галерия</h3>
-    <div id="gallery"></div>
-  </div>
-
-  <!-- RIGHT: CALENDAR -->
-  <div class="right">
-
-    <select id="eventSelect"></select>
-
-    <h3 id="calTitle"></h3>
-    <div id="calendar"></div>
-
-    <button onclick="goBack()">Назад</button>
-
-  </div>
-
-</div>
-
-<script src="event.js"></script>
+<body class="detail-page">
+  <header class="site-header"><div class="header-wrap"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">В</span><span><strong>Възраждане</strong><small>Търновска област</small></span></a><a class="back-top" href="index.html#timeline">← Към хронологията</a></div></header>
+  <main class="shell detail-layout">
+    <section id="detailContent" class="detail-content" aria-live="polite"></section>
+    <aside id="detailSidebar" class="detail-sidebar"></aside>
+  </main>
+  <footer class="site-footer"><div class="shell footer-grid"><div><p class="eyebrow">Онлайн календар</p><p>Източниците и кредитите са видими за всяка учебна дата.</p></div><div><a class="text-link" href="index.html#resources">Работа с източници <span>→</span></a></div></div></footer>
+  <script src="data/content.js"></script><script src="event.js"></script>
 </body>
 </html>

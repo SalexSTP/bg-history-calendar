@@ -1,21 +1,82 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="bg">
 <head>
-<meta charset="UTF-8">
-<title>Исторически календар</title>
-
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Интерактивен учебен календар за Българското възраждане в Търновска област.">
+  <title>Календар на Българското възраждане в Търновска област</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+  <a class="skip-link" href="#timeline">Към хронологията</a>
+  <header class="site-header">
+    <div class="header-wrap">
+      <a class="brand" href="index.html" aria-label="Начална страница">
+        <span class="brand-mark" aria-hidden="true">В</span>
+        <span><strong>Възраждане</strong><small>Търновска област</small></span>
+      </a>
+      <nav class="topnav" aria-label="Главна навигация">
+        <a class="is-active" href="index.html">Календар</a>
+        <a href="#modules">4 модула</a>
+        <a href="#resources">Източници</a>
+      </nav>
+    </div>
+  </header>
 
-<header class="hero">
-  <h1>Българско възраждане</h1>
-  <p>Кликни събитие за подробности</p>
-</header>
+  <main>
+    <section class="hero shell">
+      <div class="hero-copy">
+        <p class="eyebrow">Учебен интерактивен проект</p>
+        <h1>Българското възраждане<br><em>в Търновска област</em></h1>
+        <p class="lead">Проследи как училищата, църковните общности, читалищата и революционните комитети променят региона — от 1815 до 1879 г.</p>
+        <div class="hero-meta">
+          <span>Велико Търново</span><i>•</i><span>Елена</span><i>•</i><span>Свищов</span><i>•</i><span>Лясковец</span><i>•</i><span>Бяла черква</span><i>•</i><span>Горна Оряховица</span>
+        </div>
+      </div>
+      <aside class="hero-panel" aria-label="Обхват на проекта">
+        <div class="panel-number" id="eventCount">0</div>
+        <div><strong>подбрани събития</strong><p>в 4 последователни етапа</p></div>
+        <div class="legend-row">
+          <span><b class="dot education"></b>Просвета и култура</span>
+          <span><b class="dot church"></b>Църковни борби</span>
+          <span><b class="dot political"></b>Политически борби</span>
+        </div>
+      </aside>
+    </section>
 
-<main class="timeline" id="timeline"></main>
+    <section class="toolbar-shell shell" aria-label="Търсене и филтри">
+      <div class="search-box">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m21 21-4.35-4.35m1.35-5.15a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <input id="searchInput" type="search" placeholder="Търси по име на събитие, личност или град…" autocomplete="off">
+        <button id="clearSearch" type="button" aria-label="Изчисти търсенето">×</button>
+      </div>
+      <div class="category-buttons" role="group" aria-label="Покажи събития по направление">
+        <button class="category-button is-active" type="button" data-category="all" aria-pressed="true">Всички</button>
+        <button class="category-button" type="button" data-category="political" aria-pressed="false">Политически</button>
+        <button class="category-button" type="button" data-category="church" aria-pressed="false">Църковни</button>
+        <button class="category-button" type="button" data-category="education-culture" aria-pressed="false">Просвета и култура</button>
+      </div>
+      <label class="stage-control">Етап<select id="stageFilter"><option value="all">Всички 4 модула</option></select></label>
+    </section>
 
-<script src="script.js"></script>
+    <section id="modules" class="modules shell" aria-labelledby="modules-title">
+      <div class="section-heading"><div><p class="eyebrow">Структура по заданието</p><h2 id="modules-title">Четири етапа, една хронологична линия</h2></div><p>Всеки модул има основен акцент и допълнителни дати.</p></div>
+      <div id="stageCards" class="stage-grid"></div>
+    </section>
+
+    <section id="timeline" class="timeline-section shell" aria-labelledby="timeline-title">
+      <div class="section-heading timeline-heading"><div><p class="eyebrow">Хронология</p><h2 id="timeline-title">Събитията едно след друго</h2></div><p id="resultSummary" class="result-summary" aria-live="polite"></p></div>
+      <div id="eventsStack" class="events-stack"></div>
+    </section>
+
+    <section id="resources" class="resources shell" aria-labelledby="resources-title">
+      <p class="eyebrow">Работа с източници</p><h2 id="resources-title">Провери източника към всяко събитие</h2>
+      <p>На страницата на всяко събитие има линк към използвания източник, а отделно са посочени и кредитите за изображенията. Когато източникът посочва само година или месец, това е отбелязано в календара.</p>
+      <a class="text-link" href="credits.html" target="_blank" rel="noopener">Виж кредити за изображенията <span>→</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="shell footer-grid footer-grid-single"><div><p class="eyebrow">Кратко заключение</p><p id="conclusionText"></p></div></div></footer>
+  <script src="data/content.js"></script><script src="app.js"></script>
 </body>
 </html>
